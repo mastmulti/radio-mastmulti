@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Radio Mastmulti</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+        .player-card { background: #333; padding: 30px; border-radius: 20px; display: inline-block; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #visualizer { width: 300px; height: 100px; background: #000; margin: 20px auto; display: flex; align-items: flex-end; gap: 2px; }
+        .bar { flex: 1; background: #00ff00; height: 10%; transition: height 0.1s; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; border-radius: 10px; border: none; background: #00ff00; color: #000; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="player-card">
+        <h1>Radio Mastmulti</h1>
+        <div id="visualizer">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <audio id="stream" src="http://109.169.15.21:34619/stream" preload="none"></audio>
+        <button onclick="togglePlay()" id="btn">GRAJ</button>
+    </div>
+
+    <script>
+        const audio = document.getElementById('stream');
+        const btn = document.getElementById('btn');
+        const bars = document.querySelectorAll('.bar');
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play().catch(() => alert("Błąd strumienia. Sprawdź link!"));
+                btn.innerText = "STOP";
+                startVis();
+            } else {
+                audio.pause();
+                btn.innerText = "GRAJ";
+            }
+        }
+
+        // Auto-reconnect przy błędzie
+        audio.onerror = () => {
+            console.log("Reconnecting...");
+            setTimeout(() => { audio.load(); audio.play(); }, 3000);
+        };
+
+        function startVis() {
+            setInterval(() => {
+                if(!audio.paused) {
+                    bars.forEach(bar => bar.style.height = Math.random() * 100 + "%");
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
